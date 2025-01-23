@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd">
+<configuration>
+
+    <!-- 타입 별칭을 정의 (필요시) -->
+    <typeAliases>
+        <typeAlias type="com.ohgiraffers.menu.model.dto.MenuDTO" alias="MenuDTO"/>
+    </typeAliases>
+
+    <!-- 매퍼 파일 등록 -->
+    <mappers>
+        <mapper resource="com/ohgiraffers/menu/model/dao/MenuMapper.xml"/>
+    </mappers>
+
+</configuration>

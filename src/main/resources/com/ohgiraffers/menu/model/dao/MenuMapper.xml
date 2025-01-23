@@ -1,0 +1,147 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.ohgiraffers.menu.model.dao.MenuMapper">
+
+    <!-- 메뉴 데이터만 매핑 -->
+    <resultMap id="menuResultMap" type="com.ohgiraffers.menu.model.dto.MenuDTO">
+        <id property="code" column="menu_code"/>
+        <result property="name" column="menu_name"/>
+        <result property="price" column="menu_price"/>
+        <result property="categoryCode" column="category_code"/>
+        <result property="orderableStatus" column="orderable_status"/>
+    </resultMap>
+
+    <!-- MenuDTO와 CategoryDTO를 매핑 -->
+    <resultMap id="menuAndCategoryResultMap" type="com.ohgiraffers.menu.model.dto.MenuDTO">
+        <id property="code" column="menu_code"/>
+        <result property="name" column="menu_name"/>
+        <result property="price" column="menu_price"/>
+        <result property="orderableStatus" column="orderable_status"/>
+        <association property="category" javaType="com.ohgiraffers.menu.model.dto.CategoryDTO">
+            <id property="categoryCode" column="category_code"/>
+            <result property="categoryName" column="category_name"/>
+            <result property="refCategoryCode" column="ref_category_code"/>
+        </association>
+    </resultMap>
+
+    <!-- 메뉴 전체 조회 -->
+    <select id="selectAllMenu" resultMap="menuResultMap">
+        SELECT
+            m.menu_code,
+            m.menu_name,
+            m.menu_price,
+            m.category_code,
+            m.orderable_status
+        FROM
+            tbl_menu m
+        WHERE
+            m.orderable_status = 'Y'
+        ORDER BY
+            m.menu_code
+    </select>
+
+    <!-- 특정 메뉴 복합 검색: 메뉴 이름 또는 카테고리 이름으로 검색 -->
+    <select id="searchMenu" parameterType="map" resultMap="menuAndCategoryResultMap">
+        SELECT
+            m.menu_code,
+            m.menu_name,
+            m.menu_price,
+            m.orderable_status,
+            c.category_code,
+            c.category_name,
+            c.ref_category_code
+        FROM
+            tbl_menu m
+                INNER JOIN
+            tbl_category c ON m.category_code = c.category_code
+        WHERE
+            m.orderable_status = 'Y'
+          AND
+            (
+                (#{type} = 'menuName' AND m.menu_name LIKE CONCAT('%', #{keyword}, '%'))
+                    OR
+                (#{type} = 'categoryName' AND c.category_name LIKE CONCAT('%', #{keyword}, '%'))
+                )
+        ORDER BY
+            m.menu_code
+    </select>
+
+
+    <!-- 신규 메뉴 등록 -->
+    <insert id="registMenu" parameterType="com.ohgiraffers.menu.model.dto.MenuDTO">
+        INSERT INTO tbl_menu (
+            menu_name,
+            menu_price,
+            category_code,
+            orderable_status
+        ) VALUES (
+                     #{name},
+                     #{price},
+                     #{categoryCode},
+                     'Y'
+                 )
+    </insert>
+
+    <!-- 메뉴 수정 -->
+    <update id="modifyMenu" parameterType="com.ohgiraffers.menu.model.dto.MenuDTO">
+        UPDATE tbl_menu
+        SET
+            menu_name = #{name},
+            menu_price = #{price},
+            category_code = #{categoryCode}
+        WHERE
+            menu_code = #{code}
+    </update>
+
+    <!-- 메뉴 삭제 -->
+    <delete id="deleteMenu" parameterType="int">
+        DELETE FROM tbl_menu
+        WHERE menu_code = #{code}
+    </delete>
+
+    <!-- 메뉴 이름으로 검색 -->
+    <select id="searchMenuByName" parameterType="string" resultMap="menuAndCategoryResultMap">
+        SELECT
+            m.menu_code,
+            m.menu_name,
+            m.menu_price,
+            m.orderable_status,
+            c.category_code,
+            c.category_name,
+            c.ref_category_code
+        FROM
+            tbl_menu m
+                INNER JOIN
+            tbl_category c ON m.category_code = c.category_code
+        WHERE
+            m.orderable_status = 'Y'
+          AND m.menu_name LIKE CONCAT('%', #{keyword}, '%')
+        ORDER BY
+            m.menu_code
+    </select>
+
+    <!-- 카테고리 이름으로 검색 -->
+    <select id="searchMenuByCategory" parameterType="string" resultMap="menuAndCategoryResultMap">
+        SELECT
+            m.menu_code,
+            m.menu_name,
+            m.menu_price,
+            m.orderable_status,
+            c.category_code,
+            c.category_name,
+            c.ref_category_code
+        FROM
+            tbl_menu m
+                INNER JOIN
+            tbl_category c ON m.category_code = c.category_code
+        WHERE
+            m.orderable_status = 'Y'
+          AND c.category_name LIKE CONCAT('%', #{keyword}, '%')
+        ORDER BY
+            m.menu_code
+    </select>
+
+</mapper>
