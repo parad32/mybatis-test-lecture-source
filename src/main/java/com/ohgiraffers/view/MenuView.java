@@ -27,7 +27,9 @@ public class MenuView {
                     sc.next(); // 잘못된 입력 제거
                     continue;
                 }
-                return sc.nextInt();
+                int choice = sc.nextInt();
+                sc.nextLine(); // 버퍼 비우기 (Enter 키 제거)
+                return choice;
             } catch (Exception e) {
                 System.out.println("[ERROR] 메뉴 번호 입력 중 오류가 발생했습니다. 다시 시도해주세요.");
                 sc.nextLine(); // 입력 버퍼 초기화
