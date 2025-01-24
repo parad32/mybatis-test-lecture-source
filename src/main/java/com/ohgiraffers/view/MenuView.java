@@ -35,18 +35,19 @@ public class MenuView {
         }
     }
 
-    //동적쿼리활용코드 문자열 입력받기
     public Map<String, String> inputSearch() {
         Map<String, String> searchCriteria = new HashMap<>();
 
         while (true) {
             System.out.print("검색 유형을 선택하세요 (menuName/categoryName): ");
-            String type = sc.nextLine().trim();
+            String type = sc.nextLine().trim().toLowerCase(); // 입력값을 소문자로 변환
 
-            // 검색 유형 유효성 검사  ---- 초기값이 if 조건과 불일치해서 메뉴 호출시 error가 한번 호출되는 문제점 있음..
-            if (!type.equals("menuName") && !type.equals("categoryName")) {
-                System.out.println("[error] 정확한 값을 입력해주세요");
-                continue; // 유효하지 않으면 다시 입력
+            // 검색 유형 유효성 검사
+            if (!type.equals("menuname") && !type.equals("categoryname")) {
+                if (!type.isEmpty()) { // 입력값이 비어있지 않을 때만 오류 메시지 출력
+                    System.out.println("[ERROR] 정확한 값을 입력해주세요.");
+                }
+                continue; // 유효하지 않으면 다시 입력받기
             }
 
             System.out.print("검색할 키워드를 입력하세요: ");
@@ -59,7 +60,7 @@ public class MenuView {
 
             // 검색 조건을 맵에 저장
             searchCriteria.put("type", type);
-            searchCriteria.put("keyword", keyword);
+            searchCriteria.put("keyword", keyword.toLowerCase()); // 키워드도 소문자로 저장
 
             break; // 모든 입력이 유효하면 반복 종료
         }
